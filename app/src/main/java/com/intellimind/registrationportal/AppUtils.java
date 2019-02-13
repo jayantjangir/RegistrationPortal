@@ -36,9 +36,13 @@ public final class AppUtils {
     public static final String COUNTRY_CODE_STRING = "countryCode";
     public static final String PHONE_NUMBER_STRING = "phoneNumber";
     public static final String EMAIL_STRING = "email";
+    public static final String EMAIL_STRING_VERIFICATION = "emailVerificationStatus";
     public static final String GENDER_STRING = "gender";
     public static final String PROFESSION_STRING = "profession";
-    public static final String DOB_STRING = "DOB";
+    public static final String DOB_STRING = "DateofBirth";
+    public static final String DOB_DSTRING = "DayOfBirth";
+    public static final String DOB_MSTRING = "MonthOfBirth";
+    public static final String DOB_YSTRING = "YearOfBirth";
     public static final String RA_STRING = "retirementAge";
 
     public static final String PHONE_VERIFIED_STRING = "phoneVerified";
@@ -127,7 +131,7 @@ public final class AppUtils {
 
     public static void loadFromNetImage(final Activity activity, final String path, final ImageView imageView, final int maxBytes){
 
-//        getStoragePermission(activity);
+        getStoragePermission(activity);
         Uri pathUri = checkInCache(path, MEDIA_TYPE_IMAGE);
         if(pathUri != null){
             imageView.setImageURI(pathUri);
@@ -215,4 +219,6 @@ public final class AppUtils {
         }
         return null;
     }
+
+
 }

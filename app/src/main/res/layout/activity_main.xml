@@ -157,6 +157,13 @@
                             android:textSize="18sp"
                             android:layout_weight="1"/>
 
+                        <TextView
+                            android:layout_width="48sp"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textColor="@android:color/black"
+                            android:id="@+id/tv_apv_email_verification"/>
+
                         <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -191,11 +198,20 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="+91 9876543210"
+                            android:text="+91 9882878981"
                             android:id="@+id/tv_apv_contacts"
                             android:textSize="18sp"
+                            android:inputType="phone"
+                            android:maxLength="15"
                             android:textColor="@android:color/black"
                             android:layout_weight="1"/>
+
+                        <TextView
+                            android:layout_width="48sp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tv_apv_contacts_status"
+                            android:textColor="@android:color/black"
+                            android:textSize="18sp"/>
 
                         <ImageButton
                             android:layout_width="wrap_content"
@@ -249,7 +265,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Engineer"
-                        android:id="@+id/tv_apv_profession"
+                        android:id="@+id/tv_submit_select_profession"
                         android:textSize="18sp"
                         android:textColor="@android:color/black"/>
 
@@ -271,7 +287,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Engineer"
+                        android:text="1-1-1997"
                         android:id="@+id/tv_apv_date_of_birth"
                         android:textSize="18sp"
                         android:textColor="@android:color/black"/>
@@ -294,8 +310,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Engineer"
-                        android:id="@+id/tv_apv_ra"
+                        android:text="55"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:id="@+id/et_sumit_retirement_age"
                         android:textSize="18sp"
                         android:textColor="@android:color/black"/>
 
@@ -303,9 +321,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/logout_button"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="24dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="24dp"
                         android:paddingHorizontal="16dp"
                         android:background="@drawable/red_button"
                         android:text="Logout"

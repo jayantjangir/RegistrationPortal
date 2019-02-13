@@ -32,7 +32,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +42,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -58,6 +61,7 @@ public class RegisterActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static int PICK_IMAGE_REQUEST = 75;
     public static final String MALE_STRING = "Male";
     public static final String FEMALE_STRING = "Female";
 
@@ -184,14 +188,14 @@ public class RegisterActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
 
-                mSubmitDetails.setClickable(false);
+//                mSubmitDetails.setClickable(false);
 
                 if (!TextUtils.isEmpty(userFirstNameFinal)
                         && (genderFinal == 0 || genderFinal == 1 )
-                        && (professionFinal == 0 || professionFinal == 1 || professionFinal == 2)
+                        && (professionFinal == 0 || professionFinal == 1 || professionFinal == 2 || professionFinal == 3)
                         && (!TextUtils.isEmpty(phoneNumberFinal))
                         && !TextUtils.isEmpty(calendarFinal.toString())
-                        && !TextUtils.isEmpty(userRetirementAgeFinal) && userRetirementAgeFinal.length()!=2 ){
+                        && !TextUtils.isEmpty(userRetirementAgeFinal) && userRetirementAgeFinal.length()==2 ){
 
                     if (firebaseUser == null) {
                         Intent i = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -265,10 +269,11 @@ public class RegisterActivity extends AppCompatActivity implements
         mProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setAspectRatio(1, 1)
-                        .start(RegisterActivity.this);
+                uploadImage();
+//                CropImage.activity()
+//                        .setGuidelines(CropImageView.Guidelines.ON)
+//                        .setAspectRatio(1, 1)
+//                        .start(RegisterActivity.this);
             }
         });
 
@@ -386,7 +391,7 @@ public class RegisterActivity extends AppCompatActivity implements
         UserProfileChangeRequest userProfileChangeRequest;
 
         userProfileChangeRequest = new UserProfileChangeRequest.Builder()
-                .setDisplayName(userFirstNameFinal)
+                .setDisplayName(userFirstNameFinal+" "+userLastNameFinal)
                 .build();
 
         firebaseUser.updateProfile(userProfileChangeRequest)
@@ -407,7 +412,11 @@ public class RegisterActivity extends AppCompatActivity implements
                             childUpdates.put(AppUtils.GENDER_STRING, genderFinal);
                             childUpdates.put(AppUtils.PROFESSION_STRING, professionFinal);
                             childUpdates.put(AppUtils.RA_STRING, userRetirementAgeFinal);
-                            childUpdates.put(AppUtils.DOB_STRING, calendarFinal.DATE);
+                            childUpdates.put(AppUtils.DOB_STRING,calendarFinal);
+                            childUpdates.put(AppUtils.EMAIL_STRING_VERIFICATION,mAuth.getCurrentUser().isEmailVerified());
+                            childUpdates.put(AppUtils.DOB_DSTRING, calendarFinal.DAY_OF_YEAR);
+                            childUpdates.put(AppUtils.DOB_MSTRING, calendarFinal.MONTH);
+                            childUpdates.put(AppUtils.DOB_YSTRING,calendarFinal.YEAR);
                             childUpdates.put(AppUtils.COUNTRY_CODE_STRING, countryCodeFinal);
                             childUpdates.put(AppUtils.PHONE_NUMBER_STRING, phoneNumberFinal);
                             childUpdates.put(AppUtils.PHONE_VERIFIED_STRING, false);
@@ -496,5 +505,56 @@ public class RegisterActivity extends AppCompatActivity implements
 
     public void close() {
         finish();
+    }
+
+    private void uploadImage() {
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"Select Picture"),PICK_IMAGE_REQUEST);
+        if(selectImageUri!=null){
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading . . .");
+            progressDialog.show();
+
+//            selectImageUri = data.getData();
+//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+//            selectImageUri = result.getUri();
+
+            final Bitmap imageBitmap = AppUtils.reduceImageSize(RegisterActivity.this, selectImageUri);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final int imageSize = imageBitmap.getByteCount();
+
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            mProfilePic.setImageBitmap(imageBitmap);
+
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child("Users/" + mAuth.getCurrentUser().getUid());
+            ref.putFile(selectImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this,"Uploaded",Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this,"Failed"+e.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            }).addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this,"Cancel Uploading ",Toast.LENGTH_SHORT).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                    progressDialog.setMessage("Uploading "+(int)progress+"%");
+                }
+            });
+        }
     }
 }
