@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1084180075551",
+    "firebase_url": "https://registration-portal-4823a.firebaseio.com",
+    "project_id": "registration-portal-4823a",
+    "storage_bucket": "registration-portal-4823a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084180075551:android:2a983d46806b8c1b",
+        "android_client_info": {
+          "package_name": "com.intellimind.registrationportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084180075551-ukeg4s1mt0m4im9qqllgjggvtd1sl9as.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.intellimind.registrationportal",
+            "certificate_hash": "0f52330dd260566eab7d5596ed0957dd5d0cb060"
+          }
+        },
+        {
+          "client_id": "1084180075551-gnsmn1410mv267jgunmc9kbqqooek99j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8q2EpurED9E0h96zoYk_kz6xfUx04sqc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084180075551-gnsmn1410mv267jgunmc9kbqqooek99j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
